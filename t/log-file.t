@@ -1,57 +1,28 @@
-#!/usr/bin/perl
-#===============================================================================
-#         FILE:  log_file.t
-#
-#  DESCRIPTION:  Test Log::File
-#
-#       AUTHOR:  Trevor S. Cornpropst, <tscornpropst@gmail.com>
-#      COMPANY:  -
-#      VERSION:  1.0
-#      CREATED:  05/03/2006 21:00:31 EDT
-#===============================================================================
+#!perl
 
 use strict;
 use warnings;
 
-use Test::More tests => 73;
+use Test::More;#tests => 73;
 use Test::Exception;
-#use Test::Strict;
+
 use Fcntl;
+use File::Spec;
 
-BEGIN { use_ok('Log::File'); }
+use_ok('Log::File');
 
-my $module = 'Log::File';
-my $mod_file = '../Log/File.pm';
-my @methods = qw(
-    new
-    close
-    _log
-    _msg
-    debug
-    error
-    info
-    notice
-    warn
-    die
-    level
-);
+ok( my $logfile = File::Spec->catfile( 't', 'fixtures', 'test.log' ), 'set $logfile' );
 
-#strict_ok($module);
-#warnings_ok($module);
-#syntax_ok($module);
-
-my $logfile = "./t/sampdata/test.log";
-
-unlink $logfile;
+SKIP: {
+    skip( 'log file does not exist', 1 ) unless -f $logfile;
+    ok( unlink $logfile, 'delete log file' );
+}
 
 is(-e $logfile, undef, 'old log file deleted');
 
 ok(my $log = Log::File->new( { file => $logfile } ), 'basic constructor');
 
-isa_ok($log, 'Log::File');
-can_ok($log, @methods);
-
-my @stat = stat $logfile;
+ok( my @stat = stat $logfile, 'stat log file' );
 #my $mode = sprintf '%04o', $stat[2] & oct(7777);
 #cmp_ok($mode, '==', 644, 'default perms');
 
@@ -139,3 +110,10 @@ SKIP: {
 
     dies_ok { $log = Log::File->new({ file => './t/sampdata/immutable.log' }) }'constructor to innaccessible file'; 
 }
+
+SKIP: {
+    skip( 'log file does not exist', 1 ) unless -f $logfile;
+    ok( unlink $logfile, 'delete log file' );
+}
+
+done_testing();
