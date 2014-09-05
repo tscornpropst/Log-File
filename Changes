@@ -1,0 +1,13 @@
+Revision history for Log::File
+
+0.01  2007-06-06
+      First version
+
+0.02  2007-06-18
+      Implement Class::Std
+
+0.03  2007-07-02
+      Replace Class::Std with Class::InsideOut
+
+0.04  2014-08-23
+      Created as CPAN distribution
