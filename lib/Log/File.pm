@@ -34,9 +34,7 @@ private level  => my %level;
 sub new {
     my ( $class, $arg ) = @_;
 
-    my $self = \( my $scalar );
-    bless $self, $class;
-    register ($self);
+    my $self = register($class);
 
     $file{id $self} = $arg->{file}
         or croak 'Missing file parameter in ', ( caller(0) )[3];
@@ -141,7 +139,9 @@ sub warn {
     my ( $self, $string ) = @_;
 
     return unless $WARNING <= $level{id $self};
+    ## no critic qw(RequireCarping)
     warn $string;
+    ## critic
     return _log( $self, _msg( 'warning', $string ) );
 }
 
@@ -149,7 +149,9 @@ sub warn {
 sub die {
     my ( $self, $string ) = @_;
     _log( $self, _msg( 'critical', $string ) );
+    ## no critic qw(RequireCarping)
     die $string;
+    ## critic
     return;
 }
 
