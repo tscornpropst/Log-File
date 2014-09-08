@@ -7,15 +7,9 @@ verbose = 8
 exclude_functions = print say
 
 # Do not load these policies
-[-Documentation::RequirePodSections]
 [-CodeLayout::ProhibitParensWithBuiltins]
+[-ControlStructures::ProhibitNegativeExpressionsInUnlessAndUntilConditions]
 [-CodeLayout::RequireTidyCode]
-[-ControlStructures::ProhibitCStyleForLoops]
 [-ControlStructures::ProhibitPostfixControls]
-[-ControlStructures::ProhibitUnlessBlocks]
 [-Subroutines::ProhibitBuiltinHomonyms]
-[-ValuesAndExpressions::ProhibitNoisyQuotes]
-[-ValuesAndExpressions::RequireInterpolationOfMetachars]
-[-Variables::ProhibitPunctuationVars]
-[-RegularExpressions::ProhibitEnumeratedClasses]
-
+[-NamingConventions::ProhibitAmbiguousNames]

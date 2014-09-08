@@ -21,8 +21,6 @@ Readonly::Scalar my $WARNING      => 2;
 Readonly::Scalar my $CRITICAL     => 1;
 Readonly::Scalar my $ERROR        => 1;
 
-{
-
 private append => my %append;
 private fh     => my %fh;
 private mode   => my %mode;
@@ -37,7 +35,9 @@ sub new {
     my $self = register($class);
 
     $file{id $self} = $arg->{file}
+        ## no critic qw(ProhibitMagicNumbers) false positive
         or croak 'Missing file parameter in ', ( caller(0) )[3];
+        # critic
 
     $perms  {id $self} = $arg->{perms}  || $DEFAULT_PERM;
     $append {id $self} = $arg->{append} || 0;
@@ -52,12 +52,16 @@ sub new {
         = IO::File->new( $file{id $self}, $mode{id $self}, $perms{id $self},
         )
         or croak "Could not create file $arg->{file} in ",
+        ## no critic qw(ProhibitMagicNumbers) false positive
         ( caller(0) )[3], '. Check file ownership and permissions.';
+        # critic
 
     $fh{id $self}->autoflush(1);
 
     # Force permissions for existing files
+    ## no critic qw(ProhibitMagicNumbers) false positive
     croak "Could not set permissions on $file{id $self} in ", ( caller(0) )[3]
+    # critic
         unless chmod( $perms{id $self}, $file{id $self} );
 
     return $self;
@@ -73,7 +77,7 @@ sub DEMOLISH {
 }
 
 #-------------------------------------------------------------------------------
-sub close {  ## no critic
+sub close {
     my ($self) = @_;
 
     return $fh{id $self}->close();
@@ -83,7 +87,7 @@ sub close {  ## no critic
 sub _log {
     my ( $self, $msg ) = @_;
 
-    if ( $msg =~ /\[debug|warning\]/msx ) { print STDERR $msg; }
+    if ( $msg =~ /\[debug|warning\]/msx ) { print {*STDERR} $msg; }
 
     flock( $fh{id $self}, LOCK_EX );
 
@@ -139,20 +143,19 @@ sub warn {
     my ( $self, $string ) = @_;
 
     return unless $WARNING <= $level{id $self};
-    ## no critic qw(RequireCarping)
-    warn $string;
-    ## critic
+
+    carp $string;
+
     return _log( $self, _msg( 'warning', $string ) );
 }
 
 #-------------------------------------------------------------------------------
 sub die {
     my ( $self, $string ) = @_;
+
     _log( $self, _msg( 'critical', $string ) );
-    ## no critic qw(RequireCarping)
-    die $string;
-    ## critic
-    return;
+
+    croak $string;
 }
 
 #-------------------------------------------------------------------------------
@@ -160,8 +163,6 @@ sub level {
     my ( $self, $priority ) = @_;
     $level{id $self} = $priority;
     return $level{id $self};
-}
-
 }
 
 1;
